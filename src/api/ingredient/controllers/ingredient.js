@@ -54,7 +54,7 @@ module.exports = createCoreController(
           return s.trim();
         });
 
-        const dishIngredientsSanitized = arr.map((ingredient) => {
+        const dishIngredientsSanitized = dishIngredients.map((ingredient) => {
           return ingredient.slice(2).trim();
         });
 
