@@ -35,7 +35,7 @@ module.exports = createCoreController(
       }
     },
     async customActionTwo(ctx) {
-      const response = await openai.createCompletion({
+      const dishInformation = await openai.createCompletion({
         model: "text-davinci-003",
         prompt: `what ingredients are in ${ctx.request.body.dish}, create a frame like this:
         List ingredients numbered, just the name of the ingredient no explanation`,
@@ -46,8 +46,14 @@ module.exports = createCoreController(
         presence_penalty: 1,
       });
 
+      const dishImage = await openai.createImage({
+        prompt: `landscape image of ${ctx.request.body.dish}`,
+        n: 1,
+        size: "256x256",
+      });
+
       try {
-        const rawData = response.data.choices[0].text;
+        const rawData = dishInformation.data.choices[0].text;
 
         const dishIngredients = rawData.split(/\d+/).filter((s) => {
           if (s === "") return;
@@ -61,7 +67,8 @@ module.exports = createCoreController(
         ctx.body = {
           data: dishIngredientsSanitized,
           body: ctx.request.body.dish,
-          tokensUsed: response.data.usage.total_tokens,
+          images: dishImage.data,
+          tokensUsed: dishInformation.data.usage.total_tokens,
         };
       } catch (error) {
         ctx.body = error;
