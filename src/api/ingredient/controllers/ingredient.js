@@ -49,7 +49,7 @@ module.exports = createCoreController(
       try {
         const rawData = response.data.choices[0].text;
 
-        const dishIngredients = str.split(/\d+/).filter((s) => {
+        const dishIngredients = rawData.split(/\d+/).filter((s) => {
           if (s === "") return;
           return s.trim();
         });
